@@ -1,0 +1,31 @@
+name: Test k6 setup with browser dependencies
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          browser: 'true'
+      - name: Assert k6-version output is set
+        env:
+          K6_VERSION: ${{ steps.action.outputs.k6-version }}
+        run: |
+          echo "k6-version output: $K6_VERSION"
+          if [ -z "$K6_VERSION" ]; then
+            echo "FAIL: k6-version output is empty"
+            exit 1
+          fi
+          echo "PASS: k6-version output is '$K6_VERSION'"
+      - name: Assert k6 binary is available
+        run: |
+          echo "Checking k6 binary..."
+          if ! command -v k6 &>/dev/null; then
+            echo "FAIL: k6 binary not found in PATH"
+            exit 1
+          fi
+          echo "PASS: k6 found at $(command -v k6)"
+          k6 version
