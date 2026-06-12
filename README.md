@@ -8,6 +8,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
+| v0.0.1 | [`v0.0.1`](https://github.com/chainguard-actions/grafana-setup-k6-action/tree/v0.0.1) | [`7af9007`](https://github.com/grafana/setup-k6-action/commit/7af9007cf6ab08d712b18ed2ad067ae5c8ff441d) |
 | v1.1.0 | [`v1.1.0`](https://github.com/chainguard-actions/grafana-setup-k6-action/tree/v1.1.0) | [`ffe7d72`](https://github.com/grafana/setup-k6-action/commit/ffe7d7290dfa715e48c2ccc924d068444c94bde2) |
 
 ## Privacy
