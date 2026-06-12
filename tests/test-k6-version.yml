@@ -1,0 +1,44 @@
+name: Test k6 setup with specific version
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          k6-version: '0.49.0'
+      - name: Assert k6 is installed
+        run: |
+          echo "Checking k6 binary is available..."
+          if ! command -v k6 &>/dev/null; then
+            echo "FAIL: k6 binary not found in PATH"
+            exit 1
+          fi
+          echo "PASS: k6 is installed"
+          k6 version
+      - name: Assert k6-version output matches requested version
+        env:
+          ACTUAL: ${{ steps.action.outputs.k6-version }}
+        run: |
+          echo "actual: $ACTUAL"
+          if [ -z "$ACTUAL" ]; then
+            echo "FAIL: k6-version output is empty"
+            exit 1
+          fi
+          if [[ "$ACTUAL" != *"0.49.0"* ]]; then
+            echo "FAIL: expected version to contain '0.49.0', got '$ACTUAL'"
+            exit 1
+          fi
+          echo "PASS: k6-version output is '$ACTUAL'"
+      - name: Assert installed k6 binary version matches
+        run: |
+          INSTALLED=$(k6 version 2>&1)
+          echo "installed: $INSTALLED"
+          if [[ "$INSTALLED" != *"0.49.0"* ]]; then
+            echo "FAIL: expected installed k6 to be 0.49.0, got: $INSTALLED"
+            exit 1
+          fi
+          echo "PASS: correct k6 version installed"
