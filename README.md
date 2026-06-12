@@ -1,14 +1,50 @@
-# grafana/setup-k6-action
+# setup-k6-action
 
-Install a specific version of k6 and setup the environment for running k6 tests
+This action sets up a Grafana k6 environment for use in a GitHub Actions workflow by:
 
-Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/grafana/setup-k6-action](https://github.com/grafana/setup-k6-action).
+- Installing a specific version of k6.
+- Installing Chrome for Browser Testing (optional).
 
-## Versions
+> ⚠️ This action only supports Linux runners ⚠️
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| v1.1.0 | [`v1.1.0`](https://github.com/chainguard-actions/grafana-setup-k6-action/tree/v1.1.0) | [`ffe7d72`](https://github.com/grafana/setup-k6-action/commit/ffe7d7290dfa715e48c2ccc924d068444c94bde2) |
+## Usage
+
+See [action.yml](action.yaml).
+
+### Basic
+
+```yaml
+on:
+  push:
+
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: '0.49.0'
+      - run: k6 run script.js --quiet
+```
+
+### Browser Testing
+
+```yaml
+on:
+  push:
+
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: '0.49.0'
+          browser: true
+      - run: k6 run script.js --quiet
+```
 
 ## Privacy
 
