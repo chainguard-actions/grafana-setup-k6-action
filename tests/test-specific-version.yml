@@ -1,0 +1,39 @@
+name: Test specific k6 version
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: setup-k6
+        uses: .
+        with:
+          k6-version: '0.49.0'
+      - name: Assert k6-version output matches requested version
+        env:
+          K6_VERSION: ${{ steps.setup-k6.outputs.k6-version }}
+        run: |
+          echo "k6-version output: $K6_VERSION"
+          if [ -z "$K6_VERSION" ]; then
+            echo "FAIL: k6-version output is empty"
+            exit 1
+          fi
+          if [[ "$K6_VERSION" != *"0.49.0"* ]]; then
+            echo "FAIL: expected version to contain '0.49.0', got '$K6_VERSION'"
+            exit 1
+          fi
+          echo "PASS: k6-version=$K6_VERSION"
+      - name: Assert k6 binary reports correct version
+        run: |
+          if ! command -v k6 &>/dev/null; then
+            echo "FAIL: k6 binary not found in PATH"
+            exit 1
+          fi
+          INSTALLED=$(k6 version)
+          echo "k6 version output: $INSTALLED"
+          if [[ "$INSTALLED" != *"0.49.0"* ]]; then
+            echo "FAIL: expected k6 version to contain '0.49.0'"
+            exit 1
+          fi
+          echo "PASS"
