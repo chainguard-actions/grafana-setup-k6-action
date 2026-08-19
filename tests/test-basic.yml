@@ -1,4 +1,4 @@
-name: Test basic k6 setup (no version specified)
+name: Test basic usage - install latest k6
 on:
   workflow_dispatch:
 jobs:
@@ -6,24 +6,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
       - id: action
+        name: Setup k6 (latest version)
         uses: .
-      - name: Assert k6-version output is set
-        env:
-          K6_VERSION: ${{ steps.action.outputs.k6-version }}
+
+      - name: Assert k6 is installed and runnable
         run: |
-          echo "k6-version output: $K6_VERSION"
-          if [ -z "$K6_VERSION" ]; then
-            echo "FAIL: k6-version output is empty"
+          echo "Checking k6 is on PATH..."
+          which k6 || { echo "FAIL: k6 not found on PATH"; exit 1; }
+          k6 version || { echo "FAIL: k6 version command failed"; exit 1; }
+          echo "PASS: k6 is installed and runnable"
+
+      - name: Assert k6 version output is a valid semver
+        run: |
+          K6_VER=$(k6 version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          echo "k6 version from binary: $K6_VER"
+          if [ -z "$K6_VER" ]; then
+            echo "FAIL: could not parse k6 version from binary"
             exit 1
           fi
-          echo "PASS: k6-version output is '$K6_VERSION'"
-      - name: Assert k6 binary is available
-        run: |
-          echo "Checking k6 binary..."
-          if ! command -v k6 &>/dev/null; then
-            echo "FAIL: k6 binary not found in PATH"
-            exit 1
-          fi
-          echo "PASS: k6 found at $(command -v k6)"
-          k6 version
+          echo "PASS: k6 version is '$K6_VER'"

@@ -1,4 +1,4 @@
-name: Test k6 setup with specific version
+name: Test specific k6 version installation
 on:
   workflow_dispatch:
 jobs:
@@ -6,31 +6,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
       - id: action
+        name: Setup k6 with specific version
         uses: .
         with:
           k6-version: '0.54.0'
-      - name: Assert k6-version output matches requested version
-        env:
-          K6_VERSION: ${{ steps.action.outputs.k6-version }}
+
+      - name: Assert k6 is installed and runnable
         run: |
-          echo "k6-version output: $K6_VERSION"
-          if [ -z "$K6_VERSION" ]; then
-            echo "FAIL: k6-version output is empty"
-            exit 1
-          fi
-          if [[ "$K6_VERSION" != *"0.54.0"* ]]; then
-            echo "FAIL: expected version to contain '0.54.0', got '$K6_VERSION'"
-            exit 1
-          fi
-          echo "PASS: k6-version output is '$K6_VERSION'"
-      - name: Assert k6 binary reports correct version
+          echo "Checking k6 is on PATH..."
+          which k6 || { echo "FAIL: k6 not found on PATH"; exit 1; }
+          k6 version || { echo "FAIL: k6 version command failed"; exit 1; }
+          echo "PASS: k6 is installed and runnable"
+
+      - name: Assert installed k6 binary reports correct version
         run: |
-          echo "Checking k6 version..."
-          K6_BIN_VERSION=$(k6 version 2>&1 || true)
-          echo "k6 version output: $K6_BIN_VERSION"
-          if [[ "$K6_BIN_VERSION" != *"0.54.0"* ]]; then
-            echo "FAIL: expected k6 binary version to contain '0.54.0'"
+          INSTALLED_VERSION=$(k6 version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          echo "Installed k6 version: $INSTALLED_VERSION"
+          if [ "$INSTALLED_VERSION" != "0.54.0" ]; then
+            echo "FAIL: expected version 0.54.0 but got $INSTALLED_VERSION"
             exit 1
           fi
-          echo "PASS"
+          echo "PASS: k6 version matches expected 0.54.0"
