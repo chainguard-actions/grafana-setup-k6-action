@@ -1,4 +1,4 @@
-name: Test basic usage - install latest k6
+name: Test specific k6 version installation
 on:
   workflow_dispatch:
 jobs:
@@ -7,11 +7,13 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install k6 (latest version)
+      - name: Install k6 at a specific version
         id: action
         uses: .
+        with:
+          k6-version: '0.54.0'
 
-      - name: Assert k6 is installed and runnable
+      - name: Assert k6 is installed at the correct version
         run: |
           echo "Checking k6 is on PATH..."
           if ! command -v k6 &>/dev/null; then
@@ -20,8 +22,9 @@ jobs:
           fi
           K6_VERSION_OUTPUT=$(k6 version)
           echo "k6 version output: $K6_VERSION_OUTPUT"
-          if [ -z "$K6_VERSION_OUTPUT" ]; then
-            echo "FAIL: k6 version returned empty output"
+          if echo "$K6_VERSION_OUTPUT" | grep -q "0.54.0"; then
+            echo "PASS: k6 version 0.54.0 is installed"
+          else
+            echo "FAIL: expected k6 version 0.54.0 but got: $K6_VERSION_OUTPUT"
             exit 1
           fi
-          echo "PASS: k6 is installed and runnable"
