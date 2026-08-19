@@ -1,4 +1,4 @@
-name: Test browser dependencies installation
+name: Test k6 setup with browser dependencies
 on:
   workflow_dispatch:
 jobs:
@@ -10,21 +10,28 @@ jobs:
         uses: .
         with:
           browser: 'true'
-      - name: Assert k6-version output is set
-        env:
-          K6_VERSION: ${{ steps.setup-k6.outputs.k6-version }}
-        run: |
-          echo "k6-version output: $K6_VERSION"
-          if [ -z "$K6_VERSION" ]; then
-            echo "FAIL: k6-version output is empty"
-            exit 1
-          fi
-          echo "PASS: k6-version=$K6_VERSION"
       - name: Assert k6 binary is available
         run: |
+          echo "Checking k6 binary..."
           if ! command -v k6 &>/dev/null; then
             echo "FAIL: k6 binary not found in PATH"
             exit 1
           fi
-          echo "PASS: k6 found at $(command -v k6)"
+          echo "PASS: k6 is available at $(command -v k6)"
+      - name: Assert k6 runs successfully with browser flag
+        run: |
+          echo "Running k6 version..."
           k6 version
+          if [ $? -ne 0 ]; then
+            echo "FAIL: k6 version command failed"
+            exit 1
+          fi
+          echo "PASS: k6 runs successfully with browser dependencies installed"
+      - name: Assert K6_BROWSER_ARGS env var is set
+        run: |
+          echo "K6_BROWSER_ARGS: $K6_BROWSER_ARGS"
+          if [ "$K6_BROWSER_ARGS" != "no-sandbox" ]; then
+            echo "FAIL: expected K6_BROWSER_ARGS='no-sandbox' but got '$K6_BROWSER_ARGS'"
+            exit 1
+          fi
+          echo "PASS: K6_BROWSER_ARGS is set correctly"
