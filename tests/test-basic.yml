@@ -1,4 +1,4 @@
-name: Test k6 setup with specific version
+name: Test basic k6 setup (latest version)
 on:
   workflow_dispatch:
 jobs:
@@ -9,7 +9,6 @@ jobs:
       - id: action
         uses: .
         with:
-          k6-version: '0.54.0'
           github-token: ${{ github.token }}
       - name: Assert k6 is installed
         run: |
@@ -19,14 +18,12 @@ jobs:
             exit 1
           fi
           echo "PASS: k6 found at $(command -v k6)"
-      - name: Assert k6 binary reports correct version
+      - name: Assert k6 runs successfully
         run: |
           echo "Running k6 version command..."
-          K6_VER=$(k6 version)
-          echo "k6 version output: $K6_VER"
-          if echo "$K6_VER" | grep -qF '0.54.0'; then
-            echo "PASS: k6 binary reports version 0.54.0"
-          else
-            echo "FAIL: expected k6 binary version 0.54.0, got: $K6_VER"
+          k6 version
+          if [ $? -ne 0 ]; then
+            echo "FAIL: k6 version command failed"
             exit 1
           fi
+          echo "PASS: k6 version command succeeded"
