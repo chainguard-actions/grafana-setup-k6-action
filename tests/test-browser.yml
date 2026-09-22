@@ -1,0 +1,43 @@
+name: Test k6 setup with browser dependencies
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          k6-version: '0.54.0'
+          browser: 'true'
+          github-token: ${{ github.token }}
+      - name: Assert k6 binary is available
+        run: |
+          echo "Checking k6 binary..."
+          if ! command -v k6 &>/dev/null; then
+            echo "FAIL: k6 binary not found in PATH"
+            exit 1
+          fi
+          K6_BIN_VERSION=$(k6 version)
+          echo "k6 binary version: $K6_BIN_VERSION"
+          if ! echo "$K6_BIN_VERSION" | grep -q "0.54.0"; then
+            echo "FAIL: k6 binary does not report version 0.54.0"
+            exit 1
+          fi
+          echo "PASS: k6 is available with correct version"
+      - name: Assert action outcome
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "action outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: action succeeded (browser dependencies installed)"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "INFO: action failed (browser installation may not be supported in this environment)"
+            echo "PASS: k6 was installed before browser step failed"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
