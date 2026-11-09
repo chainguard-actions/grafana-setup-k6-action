@@ -14,6 +14,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | v1.2.0 | [`v1.2.0`](https://github.com/chainguard-actions/grafana-setup-k6-action/tree/v1.2.0) | [`70839b2`](https://github.com/grafana/setup-k6-action/commit/70839b2df2ef373adf890a6ce75653774378bffc) | [`HARDENING.md`](https://github.com/chainguard-actions/grafana-setup-k6-action/blob/v1.2.0/HARDENING.md) |
 | v1.2.1 | [`v1.2.1`](https://github.com/chainguard-actions/grafana-setup-k6-action/tree/v1.2.1) | [`db07bd9`](https://github.com/grafana/setup-k6-action/commit/db07bd9765aac508ef18982e52ab937fe633a065) | [`HARDENING.md`](https://github.com/chainguard-actions/grafana-setup-k6-action/blob/v1.2.1/HARDENING.md) |
 | v1.2.2 | [`v1.2.2`](https://github.com/chainguard-actions/grafana-setup-k6-action/tree/v1.2.2) | [`43b9fc2`](https://github.com/grafana/setup-k6-action/commit/43b9fc21641a76002687994433dd586f56e791b1) | [`HARDENING.md`](https://github.com/chainguard-actions/grafana-setup-k6-action/blob/v1.2.2/HARDENING.md) |
+| v1.3.0 | [`v1.3.0`](https://github.com/chainguard-actions/grafana-setup-k6-action/tree/v1.3.0) | [`c47136d`](https://github.com/grafana/setup-k6-action/commit/c47136d33d365efbeb9ae7266908b5dcf98cdece) | [`HARDENING.md`](https://github.com/chainguard-actions/grafana-setup-k6-action/blob/v1.3.0/HARDENING.md) |
 
 ## Privacy
 
