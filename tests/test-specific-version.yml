@@ -1,0 +1,31 @@
+name: Test specific k6 version
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        with:
+          k6-version: '0.54.0'
+      - name: Assert k6 is on PATH with the requested version
+        run: |
+          which k6 || { echo "FAIL: k6 not on PATH"; exit 1; }
+          OUT="$(k6 version)"
+          echo "k6 version: $OUT"
+          if ! echo "$OUT" | grep -q "v0.54.0"; then
+            echo "FAIL: expected k6 v0.54.0"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert k6 can run a simple script
+        run: |
+          cat > /tmp/script.js <<'EOF'
+          export default function () {
+            console.log("hello from k6");
+          }
+          EOF
+          k6 run --quiet --iterations 1 /tmp/script.js
+          echo "PASS"

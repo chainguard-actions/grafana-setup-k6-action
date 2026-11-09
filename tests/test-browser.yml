@@ -1,0 +1,40 @@
+name: Test browser setup
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Provide a google-chrome binary so the action detects an installed browser
+        run: |
+          mkdir -p "$RUNNER_TEMP/fake-chrome"
+          cat > "$RUNNER_TEMP/fake-chrome/google-chrome" <<'EOF'
+          #!/bin/sh
+          echo "Google Chrome 120.0.6099.109"
+          EOF
+          chmod +x "$RUNNER_TEMP/fake-chrome/google-chrome"
+          echo "$RUNNER_TEMP/fake-chrome" >> "$GITHUB_PATH"
+      - id: action
+        uses: .
+        with:
+          k6-version: '0.54.0'
+          browser: 'true'
+      - name: Assert K6_BROWSER_ARGS was exported
+        run: |
+          echo "K6_BROWSER_ARGS: $K6_BROWSER_ARGS"
+          if [ "$K6_BROWSER_ARGS" != "no-sandbox" ]; then
+            echo "FAIL: expected K6_BROWSER_ARGS=no-sandbox"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Assert k6 is installed with requested version
+        run: |
+          which k6 || { echo "FAIL: k6 not on PATH"; exit 1; }
+          OUT="$(k6 version)"
+          echo "k6 version: $OUT"
+          if ! echo "$OUT" | grep -q "v0.54.0"; then
+            echo "FAIL: expected k6 v0.54.0"
+            exit 1
+          fi
+          echo "PASS"
