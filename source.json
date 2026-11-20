@@ -4,8 +4,13 @@
   "version": "v1.2.1",
   "commit_sha": "db07bd9765aac508ef18982e52ab937fe633a065",
   "url": "https://github.com/grafana/setup-k6-action",
-  "policy_sha": "d636be7e43ef829af6e853da6b3c7566db9f72fe",
+  "policy_sha": "374911c4be584df24e6da57af2d990570ef0f859",
   "test_policy_sha": "843adf9e4b8f85d0c08b27b9d0b09dd094b54702",
   "test_agent_version": "2",
-  "harden_agent_version": "2"
+  "harden_agent_version": "2",
+  "dist_artifact": {
+    "gcs_uri": "gs://patch-actions-node-artifacts/dist-artifacts/grafana/setup-k6-action/v1.2.1/sha256-caee00919a529a67cdd443c8e7c01731280c892fedd87ba2a74836f5a109ebf3.tar.gz",
+    "sha256": "caee00919a529a67cdd443c8e7c01731280c892fedd87ba2a74836f5a109ebf3",
+    "size_bytes": 330374
+  }
 }
